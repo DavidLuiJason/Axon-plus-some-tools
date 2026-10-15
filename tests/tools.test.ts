@@ -35,12 +35,12 @@ function names(views: ReturnType<typeof buildGroupViews>): string[] {
 
 async function main() {
   console.log('-- groups');
-  assert(TOOL_GROUPS.length === 10, 'there are exactly ten groups');
-  assert(new Set(TOOL_GROUPS.map((g) => g.id)).size === 10, 'group ids are unique');
+  assert(TOOL_GROUPS.length === 11, 'there are exactly eleven groups (Files and Converters joined on 2026-10-15)');
+  assert(new Set(TOOL_GROUPS.map((g) => g.id)).size === 11, 'group ids are unique');
   assert(
     names(buildGroupViews('')).join('|') ===
-      'Media|Text and Writing|Numbers and Converters|Time and Counters|Create and Encode|Reading and Knowledge|Web and Data|AXON Code|Finance|Device and System',
-    'the ten groups appear in the decided order, with AXON Code and Finance separate'
+      'Media|Files and Converters|Text and Writing|Numbers and Converters|Time and Counters|Create and Encode|Reading and Knowledge|Web and Data|AXON Code|Finance|Device and System',
+    'the eleven groups appear in the decided order, with AXON Code and Finance separate'
   );
   assert(!names(buildGroupViews('')).includes('Code and Markets'), 'the old "Code and Markets" group is gone');
 
@@ -61,7 +61,17 @@ async function main() {
   assert(group('link-analyzer') === 'web-data', 'Link Analyzer is in Web and Data');
   assert(group('background-proof') === 'device-system', 'Background Proof is in Device and System');
   assert(group('ai-assistant') === 'device-system', 'AI Assistant is in Device and System');
-  assert(CATALOG_TOOLS.length === 6, 'six tools exist: the five old rows and Text Counter');
+  assert(CATALOG_TOOLS.length === 62, 'sixty-two tools exist: the six first ones and the fifty-six planned ones (owner decision 2026-10-15: the complete menu)');
+  assert(CATALOG_TOOLS.filter((t) => t.status === 'coming-soon').length === 59, 'fifty-nine tools are planned and honestly marked coming soon');
+  assert(
+    CATALOG_TOOLS.every((t) => t.name.trim() !== '' && t.description.trim() !== '' && t.description.length <= 100),
+    'every tool has a name and a short description'
+  );
+  assert(
+    TOOL_GROUPS.every((g) => CATALOG_TOOLS.some((t) => t.groupId === g.id)),
+    'every group holds at least one tool'
+  );
+  assert(group('file-converter') === 'files-convert' && group('voice-cloner') === 'media' && group('text-to-speech') === 'media', 'the file converter and the voice tools are in their groups');
   assert(
     CATALOG_TOOLS.filter((t) => t.status === 'available').map((t) => t.id).sort().join(',') ===
       'background-proof,interface-capture,text-counter',
@@ -75,18 +85,19 @@ async function main() {
   assert(soon('Create and Encode') && soon('Reading and Knowledge'), 'more empty groups are flagged coming soon');
   assert(soon('AXON Code') && soon('Finance'), 'AXON Code and Finance are flagged coming soon');
   assert(!soon('Text and Writing') && !soon('Web and Data') && !soon('Device and System'), 'groups with a real tool are not flagged');
-  assert(all.find((v) => v.group.name === 'Finance')?.tools.length === 0, 'Finance lists no invented tools');
+  assert(all.find((v) => v.group.name === 'Finance')?.tools.length === 4, 'Finance lists its four planned tools, all marked coming soon');
+  assert(soon('Files and Converters'), 'Files and Converters is flagged coming soon');
 
   console.log('-- filtering');
   assert(names(buildGroupViews('letters')).join('|') === 'Text and Writing', 'filter "letters" keeps only Text and Writing');
   assert(buildGroupViews('letters')[0].tools.map((t) => t.id).join(',') === 'text-counter', 'filter "letters" shows only Text Counter');
-  assert(names(buildGroupViews('count')).join('|') === 'Text and Writing|Time and Counters', 'filter "count" also finds the group whose name contains it');
+  assert(names(buildGroupViews('count')).includes('Time and Counters') && names(buildGroupViews('count')).includes('Text and Writing'), 'filter "count" finds Text and Writing and also the group whose name contains it');
   assert(names(buildGroupViews('  CAPTURE ')).join('|') === 'Web and Data', 'filter ignores case and surrounding spaces');
   assert(buildGroupViews('zzzz-no-such-tool').length === 0, 'a filter with no match gives no groups');
-  assert(buildGroupViews('   ').length === 10, 'a blank filter shows all ten groups');
+  assert(buildGroupViews('   ').length === 11, 'a blank filter shows all eleven groups');
   const finance = buildGroupViews('finance');
-  assert(finance.length === 1 && finance[0].group.name === 'Finance' && finance[0].hasAvailable === false, 'a group name finds its group, still coming soon');
-  assert(buildGroupViews('web and data')[0].tools.length === 3, 'a group name match shows all of that group\'s tools');
+  assert(finance.length === 1 && finance[0].group.name === 'Finance' && finance[0].hasAvailable === false && finance[0].tools.length === 4, 'a group name finds its group with all four tools, still coming soon');
+  assert(buildGroupViews('web and data')[0].tools.length === 5, 'a group name match shows all of that group\'s tools');
   const onlyGroup = buildGroupViews('heartbeats');
   assert(onlyGroup.length === 1 && onlyGroup[0].tools.length === 1 && onlyGroup[0].tools[0].id === 'background-proof', 'a description match shows only the matching tool');
   assert(toolMatches(CATALOG_TOOLS[0], '') === true, 'an empty query matches every tool');
@@ -97,13 +108,13 @@ async function main() {
   const home = buildHome();
   assert(home.rows.map((r) => r.group.name).join('|') === 'Text and Writing|Web and Data|Device and System', 'the home shows only the three groups that have a real tool');
   assert(home.rows.length < 5, 'the home never shows more rows than the old simple list had');
-  assert(home.comingGroups.join('|') === 'Media|Numbers and Converters|Time and Counters|Create and Encode|Reading and Knowledge|AXON Code|Finance', 'the other seven groups are named once, in the decided order');
+  assert(home.comingGroups.join('|') === 'Media|Files and Converters|Numbers and Converters|Time and Counters|Create and Encode|Reading and Knowledge|AXON Code|Finance', 'the other eight groups are named once, in the decided order');
   assert(home.rows.length + home.comingGroups.length === TOOL_GROUPS.length, 'every group is either a row or named in the quiet line');
   const web = home.rows.find((r) => r.group.id === 'web-data');
-  assert(web?.count === 3 && web.toolNames.join(', ') === 'Interface Capture, Content Extractor, Link Analyzer', 'a group row lists its tools, available ones first');
+  assert(web?.count === 5 && web.toolNames.join(', ') === 'Interface Capture, Content Extractor, Link Analyzer, JSON and Data Viewer, Web Search', 'a group row lists its tools, available ones first');
   const dev = home.rows.find((r) => r.group.id === 'device-system');
-  assert(dev?.toolNames.join(', ') === 'Background Proof, AI Assistant', 'Device and System lists Background Proof before the coming-soon AI Assistant');
-  assert(home.rows.find((r) => r.group.id === 'text-writing')?.count === 1, 'Text and Writing holds one tool');
+  assert(dev?.toolNames.join(', ') === 'Background Proof, AI Assistant, Device Profile, Backup and Restore', 'Device and System lists Background Proof before the coming-soon tools');
+  assert(home.rows.find((r) => r.group.id === 'text-writing')?.count === 8, 'Text and Writing holds the Text Counter and seven planned tools');
 
   const fakeGroups: ToolGroup[] = [{ id: 'media', name: 'Media' }, { id: 'finance', name: 'Finance' }];
   const fakeTool = (id: string, groupId: 'media' | 'finance', status: 'available' | 'coming-soon'): CatalogTool => ({
@@ -115,18 +126,20 @@ async function main() {
   assert(buildHome(fakeGroups, []).rows.length === 0 && buildHome(fakeGroups, []).comingGroups.length === 2, 'with no tools at all, nothing is a row');
 
   console.log('-- inside a group');
-  assert(toolsInGroup('web-data').map((t) => t.id).join() === 'interface-capture,content-extractor,link-analyzer', 'a group page lists its tools, available first');
-  assert(toolsInGroup('finance').length === 0, 'Finance holds no invented tools');
-  assert(toolsInGroup('text-writing').map((t) => t.id).join() === 'text-counter', 'Text and Writing holds the Text Counter');
+  assert(toolsInGroup('web-data').map((t) => t.id).join() === 'interface-capture,content-extractor,link-analyzer,json-viewer,web-search', 'a group page lists its tools, available first');
+  assert(toolsInGroup('finance').length === 4 && toolsInGroup('finance').every((t) => t.status === 'coming-soon'), 'Finance holds four planned tools, none claimed as available');
+  assert(toolsInGroup('text-writing')[0].id === 'text-counter', 'Text and Writing lists the available Text Counter first');
 
   console.log('-- search is one flat list');
   assert(searchTools('').length === 0 && searchTools('   ').length === 0, 'a blank query gives no list (the home is shown)');
   assert(searchTools('letters').map((t) => t.id).join() === 'text-counter', 'search finds a tool by its description');
   assert(searchTools('  CAPTURE ').map((t) => t.id).join() === 'interface-capture', 'search ignores case and spaces');
-  assert(searchTools('web and data').length === 3, 'a group name finds every tool in that group');
-  assert(searchTools('finance').length === 0, 'a group with no tools finds nothing, and invents nothing');
+  assert(searchTools('web and data').length === 5, 'a group name finds every tool in that group');
+  assert(searchTools('finance').length === 4, 'a group name finds its four planned tools');
+  assert(['voice-library', 'voice-cloner', 'text-to-speech'].every((id) => searchTools('voice').some((t) => t.id === id)), 'search finds the voice tools');
+  assert(searchTools('converter').some((t) => t.id === 'file-converter') && searchTools('converter').length >= 8, 'search for converter finds the converters');
   assert(searchTools('zzzz-no-such-tool').length === 0, 'a query with no match gives an empty list');
-  assert(searchTools('link').map((t) => t.id).join() === 'link-analyzer', 'search finds Link Analyzer by name');
+  assert(searchTools('link')[0].id === 'link-analyzer' && searchTools('link').some((t) => t.id === 'video-downloader'), 'search finds Link Analyzer by name, and also tools whose description mentions a link');
   assert(searchTools('count')[0].id === 'text-counter', 'search puts available tools first');
 
   console.log('-- Text Counter on the kernel');
