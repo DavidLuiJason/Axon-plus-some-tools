@@ -7,7 +7,8 @@
  */
 
 import { getAxonEngine } from '../kernel/axonEngine';
-import { createBrain, PLANNED_SOURCES, type Brain } from './brain';
+import { PLANNED_SOURCES } from './brain';
+import { createMind, type Mind } from './mind';
 import { createFoundation } from './foundation';
 import { createUserLexicon, type KeyValueStore, type UserLexicon } from './lexicon';
 import { createLocalRules } from './localRules';
@@ -19,7 +20,7 @@ export const BRAIN_COMMANDS = [TEXT_COUNT_COMMAND];
 const BRAIN_PROVIDERS = [createDictionaryProvider()];
 export const BRAIN_PROVIDER_IDS = BRAIN_PROVIDERS.map((provider) => provider.id);
 
-let shared: Brain | null = null;
+let shared: Mind | null = null;
 let sharedLexicon: UserLexicon | null = null;
 
 function phoneStorage(): KeyValueStore | null {
@@ -36,7 +37,7 @@ export function getUserLexicon(): UserLexicon {
   return sharedLexicon;
 }
 
-export function getAxonBrain(): Brain {
+export function getAxonBrain(): Mind {
   if (!shared) {
     const localRules = createLocalRules({
       commands: BRAIN_COMMANDS,
@@ -48,7 +49,7 @@ export function getAxonBrain(): Brain {
         answer: answerAbilityQuestion,
       },
     });
-    shared = createBrain([localRules, ...BRAIN_PROVIDERS], createFoundation({ abilities: { answerRequestFallback } }));
+    shared = createMind({ providers: [localRules, ...BRAIN_PROVIDERS], fallback: createFoundation({ abilities: { answerRequestFallback } }), planned: PLANNED_SOURCES });
   }
   return shared;
 }

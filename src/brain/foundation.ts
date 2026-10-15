@@ -63,6 +63,14 @@ export function createFoundation(options: FoundationOptions = {}): BrainProvider
       const lead = options.abilities
         ? `${options.abilities.answerRequestFallback(request.text)} The rest of my understanding is still being built.`
         : "I'm here, but AXON's intelligence layer isn't online yet. We're building the environment first. Once the AXON brain is connected, I'll be able to process and respond to your requests directly.";
+      if (options.abilities) {
+        return {
+          content: lead,
+          source: SOURCE,
+          leadParagraph: lead,
+          hasSources: false,
+        };
+      }
       return {
         content: lead,
         source: SOURCE,
