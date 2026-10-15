@@ -1,6 +1,6 @@
 {
  "version": 2,
- "seal": "dc5112073c39f6d7434ac66c7d13471ce5e8d7068bb7fd831c66bc2bcee5b0b7",
+ "seal": "3c152db8f3e317c2b81d978ad2e83681f2ecb96d23ae0aa6d9d4585d119e38bc",
  "dictionaries": [
   "public/dictionary/en"
  ],
@@ -324,6 +324,9 @@
   "src/components/WelcomeState.tsx": {
    "bytes": 1254
   },
+  "src/components/buildDetails.ts": {
+   "bytes": 3222
+  },
   "src/crash/crashLog.ts": {
    "bytes": 8710
   },
@@ -398,6 +401,9 @@
   },
   "src/state/axonState.ts": {
    "bytes": 4840
+  },
+  "src/state/buildConfirmations.ts": {
+   "bytes": 1774
   },
   "src/state/storage.ts": {
    "bytes": 6314
