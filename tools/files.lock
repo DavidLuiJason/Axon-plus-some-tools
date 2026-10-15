@@ -1,6 +1,6 @@
 {
  "version": 2,
- "seal": "3c152db8f3e317c2b81d978ad2e83681f2ecb96d23ae0aa6d9d4585d119e38bc",
+ "seal": "a3367417da76aaab3d8b4eb447e04966e14852a2e7636ea0341a1e00bf052939",
  "dictionaries": [
   "public/dictionary/en"
  ],
@@ -209,6 +209,21 @@
   },
   "src/brain/matcher.ts": {
    "bytes": 1999
+  },
+  "src/brain/mind/index.ts": {
+   "bytes": 379
+  },
+  "src/brain/mind/legacy.ts": {
+   "bytes": 1914
+  },
+  "src/brain/mind/pipeline.ts": {
+   "bytes": 2040
+  },
+  "src/brain/mind/stages.ts": {
+   "bytes": 6837
+  },
+  "src/brain/mind/types.ts": {
+   "bytes": 1210
   },
   "src/brain/symbols/codeRegions.ts": {
    "bytes": 6781
@@ -429,6 +444,12 @@
   "tests/brain.test.ts": {
    "bytes": 14470
   },
+  "tests/brainBoundary.test.ts": {
+   "bytes": 2470
+  },
+  "tests/brainGolden.test.ts": {
+   "bytes": 4642
+  },
   "tests/capabilityTruth.test.ts": {
    "bytes": 8399
   },
@@ -456,6 +477,9 @@
   "tests/exportPool.test.ts": {
    "bytes": 2388
   },
+  "tests/fixtures/brainGolden.json": {
+   "bytes": 36597
+  },
   "tests/fixtures/sym1-baseline.json": {
    "bytes": 12806
   },
@@ -473,6 +497,9 @@
   },
   "tests/matcher.test.ts": {
    "bytes": 13235
+  },
+  "tests/mindPipeline.test.ts": {
+   "bytes": 8737
   },
   "tests/packDictionary.test.py": {
    "bytes": 496
