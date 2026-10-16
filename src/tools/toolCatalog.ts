@@ -26,6 +26,20 @@ export interface ToolGroup {
   name: string;
 }
 
+/** Media opens on three choices; each tool in Media belongs to exactly one. */
+export type MediaSubgroupId = 'image' | 'video' | 'audio';
+
+export interface MediaSubgroup {
+  id: MediaSubgroupId;
+  name: string;
+}
+
+export const MEDIA_SUBGROUPS: readonly MediaSubgroup[] = [
+  { id: 'image', name: 'Image' },
+  { id: 'video', name: 'Video' },
+  { id: 'audio', name: 'Audio' },
+];
+
 /** Where an available tool leads. */
 export type ToolTarget = 'interface-capture' | 'background-proof' | 'text-counter';
 
@@ -34,6 +48,8 @@ export interface CatalogTool {
   name: string;
   description: string;
   groupId: ToolGroupId;
+  /** Present exactly for the tools in the Media group. */
+  subgroup?: MediaSubgroupId;
   status: 'available' | 'coming-soon';
   /** Present exactly when status is "available". */
   opens?: ToolTarget;
@@ -43,10 +59,10 @@ export const TOOL_GROUPS: readonly ToolGroup[] = [
   { id: 'media', name: 'Media' },
   { id: 'files-convert', name: 'Files and Converters' },
   { id: 'text-writing', name: 'Text and Writing' },
-  { id: 'numbers-converters', name: 'Numbers and Converters' },
-  { id: 'time-counters', name: 'Time and Counters' },
+  { id: 'numbers-converters', name: 'Numbers' },
+  { id: 'time-counters', name: 'Time' },
   { id: 'create-encode', name: 'Create and Encode' },
-  { id: 'reading-knowledge', name: 'Reading and Knowledge' },
+  { id: 'reading-knowledge', name: 'Language' },
   { id: 'web-data', name: 'Web and Data' },
   { id: 'code', name: 'AXON Code' },
   { id: 'finance', name: 'Finance' },
@@ -104,6 +120,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Image Converter',
     description: 'Convert pictures between PNG, JPG, WebP and SVG.',
     groupId: 'media',
+    subgroup: 'image',
     status: 'coming-soon',
   },
   {
@@ -111,6 +128,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Collage Maker',
     description: 'Make a collage from pictures, with a style choice.',
     groupId: 'media',
+    subgroup: 'image',
     status: 'coming-soon',
   },
   {
@@ -118,6 +136,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Picture to Table or Code',
     description: 'Turn a picture into a table (CSV) or a drawing (SVG).',
     groupId: 'media',
+    subgroup: 'image',
     status: 'coming-soon',
   },
   {
@@ -125,6 +144,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Audio Converter',
     description: 'Convert sound files between formats.',
     groupId: 'media',
+    subgroup: 'audio',
     status: 'coming-soon',
   },
   {
@@ -132,6 +152,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Text to Speech',
     description: 'Read any text aloud in a voice you choose.',
     groupId: 'media',
+    subgroup: 'audio',
     status: 'coming-soon',
   },
   {
@@ -139,6 +160,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Voice Library',
     description: 'Many voices, with pitch, speed, style and emotion you can adjust.',
     groupId: 'media',
+    subgroup: 'audio',
     status: 'coming-soon',
   },
   {
@@ -146,6 +168,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Voice Cloner',
     description: 'Clone a voice you have permission to use, with adjustable speech patterns.',
     groupId: 'media',
+    subgroup: 'audio',
     status: 'coming-soon',
   },
   {
@@ -153,6 +176,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Speech to Text',
     description: 'Turn speech or audio into text.',
     groupId: 'media',
+    subgroup: 'audio',
     status: 'coming-soon',
   },
   {
@@ -160,6 +184,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Video Converter',
     description: 'Convert video between formats.',
     groupId: 'media',
+    subgroup: 'video',
     status: 'coming-soon',
   },
   {
@@ -167,6 +192,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Video Maker',
     description: 'Turn a finished edit into a video.',
     groupId: 'media',
+    subgroup: 'video',
     status: 'coming-soon',
   },
   {
@@ -174,6 +200,7 @@ export const CATALOG_TOOLS: readonly CatalogTool[] = [
     name: 'Video Downloader',
     description: 'Download a video you have the right to keep from a link.',
     groupId: 'media',
+    subgroup: 'video',
     status: 'coming-soon',
   },
   {
@@ -563,6 +590,14 @@ function availableFirst(list: CatalogTool[]): CatalogTool[] {
 }
 
 /** The tools of one group, available ones first, otherwise in catalog order. */
+/** The tools in one Media choice (Image, Video or Audio), in catalog order. */
+export function toolsInSubgroup(
+  subgroup: MediaSubgroupId,
+  tools: readonly CatalogTool[] = CATALOG_TOOLS
+): CatalogTool[] {
+  return tools.filter((t) => t.groupId === 'media' && t.subgroup === subgroup);
+}
+
 export function toolsInGroup(
   groupId: ToolGroupId,
   tools: readonly CatalogTool[] = CATALOG_TOOLS
