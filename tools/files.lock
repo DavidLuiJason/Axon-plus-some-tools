@@ -1,6 +1,6 @@
 {
  "version": 2,
- "seal": "a3367417da76aaab3d8b4eb447e04966e14852a2e7636ea0341a1e00bf052939",
+ "seal": "ee88d710288debb17137e9ae0a702ee7eeaae7476c898992a7a691518cf49a98",
  "dictionaries": [
   "public/dictionary/en"
  ],
@@ -209,6 +209,12 @@
   },
   "src/brain/matcher.ts": {
    "bytes": 1999
+  },
+  "src/brain/mind/analysis/analyze.ts": {
+   "bytes": 10763
+  },
+  "src/brain/mind/analysis/needs.ts": {
+   "bytes": 1201
   },
   "src/brain/mind/index.ts": {
    "bytes": 379
@@ -435,6 +441,9 @@
   "src/types/index.ts": {
    "bytes": 834
   },
+  "tests/analysis.test.ts": {
+   "bytes": 9896
+  },
   "tests/askChoices.test.ts": {
    "bytes": 6407
   },
@@ -476,6 +485,9 @@
   },
   "tests/exportPool.test.ts": {
    "bytes": 2388
+  },
+  "tests/fixtures/analysis100.json": {
+   "bytes": 7006
   },
   "tests/fixtures/brainGolden.json": {
    "bytes": 36597
